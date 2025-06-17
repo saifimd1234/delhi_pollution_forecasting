@@ -20,5 +20,15 @@ def get_requirements() -> List[str]:
     
     return requirement_lst
 
+setup(
+    name="delhi_air_quality_forecasting",
+    version="0.0.1",
+    packages=find_packages(),
+    install_requires=get_requirements(),
+    author="Mohammad Saifi",
+    description="A project to analyze and forecast air quality in Delhi.",
+    url="https://github.com/saifimd1234/delhi_pollution_forecasting",
+)
+
 if __name__ == "__main__":
     get_requirements()
