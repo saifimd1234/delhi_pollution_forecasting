@@ -177,3 +177,95 @@ This code is setting up the **config blueprint** for your ML pipeline:
 | `TrainingPipelineConfig` | Top-level pipeline info like artifact folder and model save path |
 | `DataIngestionConfig`    | Specific to ingestion: file paths, split ratio, MongoDB details  |
 
+This code defines a **`DataIngestion` class** used in your **ML pipeline** to automate the process of **extracting data from MongoDB**, **storing it as a feature CSV**, and **splitting it into train/test datasets**. Here's a **brief breakdown**:
+
+---
+
+## ✅ High-Level Purpose
+
+This class performs 3 core functions in your data pipeline:
+
+1. **Extracts data** from a MongoDB collection.
+2. **Stores it** in a CSV file (called the "feature store").
+3. **Splits the data** into train and test CSV files for model training.
+
+---
+
+## 🔍 Code Breakdown
+
+### ✅ Imports and Setup
+
+```python
+from pollution_forecasting.entity.config_entity import DataIngestionConfig
+from pollution_forecasting.entity.artifact_entity import DataIngestionArtifact
+```
+
+* These contain the paths, filenames, database info, etc.
+* `MONGO_DB_URL` is fetched securely from `.env`.
+
+---
+
+### ✅ `__init__` method
+
+```python
+def __init__(self, data_ingestion_config: DataIngestionConfig):
+```
+
+* Initializes the object with ingestion configs like file paths, DB/collection names, split ratio.
+* Wrapped in a `try-except` block to raise a custom `PollutionException` on error.
+
+---
+
+### ✅ `export_collection_as_dataframe()`
+
+* Connects to MongoDB using `pymongo`.
+* Fetches all documents from the given **database + collection** and loads them into a Pandas `DataFrame`.
+* Cleans data: removes `_id` column and replaces `"na"` strings with `np.nan`.
+
+---
+
+### ✅ `export_data_into_feature_store(dataframe)`
+
+* Saves the full dataframe into a **feature store CSV file** (raw/preprocessed data).
+* Creates necessary folders if they don't exist.
+
+---
+
+### ✅ `split_data_as_train_test(dataframe)`
+
+* Uses `train_test_split` to divide the data into train and test sets.
+* Saves them as separate CSV files using the file paths from config.
+
+---
+
+### ✅ `initiate_data_ingestion()`
+
+This is the **main orchestrator** that:
+
+1. Extracts data from MongoDB.
+2. Saves it as a feature CSV.
+3. Splits it and saves train/test files.
+4. Returns a `DataIngestionArtifact` object with the train/test file paths.
+
+---
+
+## 💡 Why This is Useful in ML Projects
+
+| Step                 | Purpose                                      |
+| -------------------- | -------------------------------------------- |
+| MongoDB to DataFrame | Connects data storage to pipeline            |
+| Feature Store        | Saves raw/cleaned data in a reproducible way |
+| Train/Test Split     | Prepares data for modeling stage             |
+| Artifact Return      | Passes info cleanly to next pipeline stage   |
+
+---
+
+## ✅ Summary
+
+This code defines a robust, modular **data ingestion component** that:
+
+* Pulls data from MongoDB,
+* Saves and organizes it,
+* Splits it for ML training,
+* And logs all steps + handles errors cleanly.
+
