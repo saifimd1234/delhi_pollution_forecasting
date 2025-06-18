@@ -1,0 +1,25 @@
+columns:
+  - From_Date: str
+  - To_Date: str
+  - PM2.5: float
+  - PM10: float
+  - NO2: float
+  - NOx: float
+  - SO2: float
+  - CO: float
+  - Ozone: float
+  - NH3: float
+
+numerical_columns:
+  - PM2.5
+  - PM10
+  - NO2
+  - NOx
+  - SO2
+  - CO
+  - Ozone
+  - NH3
+
+datetime_columns:
+  - From_Date
+  - To_Date
