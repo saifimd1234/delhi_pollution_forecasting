@@ -10,5 +10,7 @@ python-dotenv==1.0.1
 pymongo
 pymongo[srv]
 certifi
+dill
+pyaml
 
--e .
+# -e .
