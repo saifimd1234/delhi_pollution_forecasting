@@ -87,3 +87,93 @@ print(artifact.training_file_path)  # Use in transformation step
 
 `DataIngestionArtifact` is a lightweight, structured object to **store and transfer output paths** from the data ingestion step, making your ML pipeline more modular, readable, and reliable.
 
+---
+
+## ✅ Purpose of This Code:
+
+It defines configuration classes that store all file paths, folder structures, and metadata related to:
+
+* The overall training pipeline.
+* The data ingestion step.
+
+These configurations help keep the pipeline **modular**, **organized**, and **easy to manage**, especially when working with large ML projects.
+
+---
+
+## 🔹 `TrainingPipelineConfig` class
+
+### Purpose:
+
+Stores basic info for the **entire training pipeline**, such as:
+
+* Name of the pipeline
+* Timestamp (used to version the run)
+* Where to store artifacts (outputs of each pipeline step)
+* Final model directory
+
+### What It Does:
+
+```python
+timestamp=timestamp.strftime("%m_%d_%Y_%H_%M_%S")
+self.artifact_dir=os.path.join(self.artifact_name,timestamp)
+```
+
+This creates a **versioned directory** like:
+
+```
+artifacts/09_14_2024_15_35_10/
+```
+
+So that every pipeline run is saved in a separate folder.
+
+---
+
+## 🔹 `DataIngestionConfig` class
+
+### Purpose:
+
+Stores configuration specific to **data ingestion**, like:
+
+* Paths to feature store, train and test files
+* Train-test split ratio
+* MongoDB collection/database names
+
+### Key Components:
+
+```python
+self.data_ingestion_dir = os.path.join(training_pipeline_config.artifact_dir, training_pipeline.DATA_INGESTION_DIR_NAME)
+```
+
+This organizes data ingestion outputs under something like:
+
+```
+artifacts/09_14_2024_15_35_10/data_ingestion/
+```
+
+### Outputs:
+
+* `feature_store_file_path`: Raw/cleaned data before splitting
+* `training_file_path`, `testing_file_path`: Where to save split files
+* `train_test_split_ratio`: Used to split your data (e.g., 0.8 train / 0.2 test)
+* `collection_name`, `database_name`: For fetching data from MongoDB
+
+---
+
+## ✅ Why This is Important in a Real Project
+
+1. **Centralized control**: You define all paths/settings in one place.
+2. **Reusability**: Other pipeline components (e.g., transformation, training) can easily access these paths/configs.
+3. **Versioning**: Timestamped folders help manage multiple runs without overwriting.
+4. **Clean Code**: Keeps logic separate from configuration.
+
+---
+
+## ✅ Summary
+
+This code is setting up the **config blueprint** for your ML pipeline:
+
+| Class                    | Purpose                                                          |
+| ------------------------ | ---------------------------------------------------------------- |
+| `TrainingPipelineConfig` | Top-level pipeline info like artifact folder and model save path |
+| `DataIngestionConfig`    | Specific to ingestion: file paths, split ratio, MongoDB details  |
+
